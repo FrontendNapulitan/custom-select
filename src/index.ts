@@ -1,4 +1,17 @@
-export * from './types';
+import * as React from 'react';
+// Interfaccia per le props specifiche del componente
+export interface SSelectorProps extends React.HTMLAttributes<HTMLElement> {
+
+}
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'my-own-select': React.DetailedHTMLProps<SSelectorProps, HTMLElement>;
+    }
+  }
+}
+
+
 export class MyOwnSelect extends HTMLElement {
   //select wrapper element
   select: HTMLButtonElement | null = null
