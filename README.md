@@ -134,6 +134,25 @@ When an option is selected, `my-own-select` emits a custom event called `selecti
 - **ReactJS**: Use a `ref` to attach an event listener to `my-own-select` and handle the selection event.
 - **Angular**: Bind directly to the `(selection)` event on the `my-own-select` tag.
 
+## Custom Arrow
+
+You can customize the arrow of your select simply writing this:
+```html
+<my-own-select >
+   <p>First option</p>
+   <h1>Second option</h1>
+   <img slot="arrowImg" src="yourUrl" alt="yourAlt" />
+</my-own-select>
+```
+everywhere in your select, event at begin or in the middle of your options:
+```html
+<my-own-select >
+   <p>First option</p>
+   <img slot="arrowImg" src="yourUrl" alt="yourAlt" />
+   <h1>Second option</h1>
+</my-own-select>
+```
+
 ## Compatibility
 
 `my-own-select` is built with the `customElements` API, making it natively compatible across modern browsers. It integrates seamlessly with popular frontend frameworks like ReactJS and Angular.
