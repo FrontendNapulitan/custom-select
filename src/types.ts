@@ -3,7 +3,7 @@ import * as React from 'react';
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      's-select': React.DetailedHTMLProps<SSelectorProps, HTMLElement>;
+      'my-own-select': React.DetailedHTMLProps<SSelectorProps, HTMLElement>;
     }
   }
 }

@@ -1,5 +1,5 @@
 export * from './types';
-export class Sselect extends HTMLElement {
+export class MyOwnSelect extends HTMLElement {
   //select wrapper element
   select: HTMLButtonElement | null = null
   //detect is browser is safari or firefox
@@ -411,4 +411,4 @@ export class Sselect extends HTMLElement {
   attributeChangedCallback(name: string, oldValue: any, newValue: any) {}
   adoptedCallback() {}
 }
-customElements.define('s-select', Sselect);
+customElements.define('my-own-select', MyOwnSelect);

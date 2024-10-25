@@ -1,36 +1,36 @@
 
-# sselect
+# my-own-select
 
-`sselect` is a highly customizable dropdown select component built using the `customElements` API. It is compatible with both ReactJS and Angular, and it allows for in-depth customization of the dropdown appearance and behavior. `sselect` offers a flexible structure, allowing you to insert HTML tags, components, and styled elements as options within the select dropdown.
+`my-own-select` is a highly customizable dropdown select component built using the `customElements` API. It is compatible with both ReactJS and Angular, and it allows for in-depth customization of the dropdown appearance and behavior. `my-own-select` offers a flexible structure, allowing you to insert HTML tags, components, and styled elements as options within the select dropdown.
 
 ## Installation
 
-You can install `sselect` via npm:
+You can install `my-own-select` via npm:
 
 ```bash
-npm install sselect
+npm install my-own-select
 ```
 
 ## Usage
 
-To use `sselect` in your project, simply include it as a custom HTML element. Below is an example of how to use it:
+To use `my-own-select` in your project, simply include it as a custom HTML element. Below is an example of how to use it:
 
 ### HTML
 
 ```html
-<s-select>
+<my-own-select>
    <p>First option</p>
    <h1>Second option</h1>
    <Component></Component>
-</s-select>
+</my-own-select>
 ```
 
 ### ReactJS
 
-For ReactJS, ensure you import and use the `sselect` component as a custom element within your JSX code. You may need to register the component to ensure it works as expected:
+For ReactJS, ensure you import and use the `my-own-select` component as a custom element within your JSX code. You may need to register the component to ensure it works as expected:
 
 ```javascript
-import 'sselect';
+import 'my-own-select';
 
 function App() {
   const selectRef = React.useRef();
@@ -46,11 +46,11 @@ function App() {
   }, []);
 
   return (
-    <s-select ref={selectRef}>
+    <my-own-select ref={selectRef}>
       <p>First option</p>
       <h1>Second option</h1>
       <MyComponent />
-    </s-select>
+    </my-own-select>
   );
 }
 ```
@@ -61,7 +61,7 @@ For Angular projects, you may need to allow custom elements within your module b
 
 ```typescript
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import 'sselect';
+import 'my-own-select';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -69,14 +69,14 @@ import 'sselect';
 export class AppModule {}
 ```
 
-Then, you can use `sselect` in your Angular templates and listen for the `selection` event:
+Then, you can use `my-own-select` in your Angular templates and listen for the `selection` event:
 
 ```html
-<s-select (selection)="onSelection($event)">
+<my-own-select (selection)="onSelection($event)">
    <p>First option</p>
    <h1>Second option</h1>
    <my-component></my-component>
-</s-select>
+</my-own-select>
 ```
 
 In your Angular component, define the `onSelection` method:
@@ -91,11 +91,11 @@ export class AppComponent {
 
 ## CSS Customization
 
-`sselect` provides parts that can be styled via the `::part()` selector. This allows you to fully customize the dropdown’s appearance:
+`my-own-select` provides parts that can be styled via the `::part()` selector. This allows you to fully customize the dropdown’s appearance:
 
 - **Select container**: Customize the main select element.
   ```css
-  s-select::part(select) {
+  my-own-select::part(select) {
     /* Add your styles here */
     background-color: lightgray;
     border: 1px solid #ccc;
@@ -105,7 +105,7 @@ export class AppComponent {
 
 - **Options container**: Style the container holding all options.
   ```css
-  s-select::part(itemsContainer) {
+  my-own-select::part(itemsContainer) {
     /* Add your styles here */
     background-color: white;
     border: 1px solid #ccc;
@@ -116,12 +116,12 @@ export class AppComponent {
 
 - **Single option item**: Customize individual options.
   ```css
-  s-select::part(item) {
+  my-own-select::part(item) {
     /* Add your styles here */
     padding: 8px;
     cursor: pointer;
   }
-  s-select::part(item-selected) {
+  my-own-select::part(item-selected) {
     /* Selected item */
     background-color: #f0f0f0;
   }
@@ -129,18 +129,18 @@ export class AppComponent {
 
 ## Custom Event: `selection`
 
-When an option is selected, `sselect` emits a custom event called `selection`. This can be intercepted in both ReactJS and Angular:
+When an option is selected, `my-own-select` emits a custom event called `selection`. This can be intercepted in both ReactJS and Angular:
 
-- **ReactJS**: Use a `ref` to attach an event listener to `s-select` and handle the selection event.
-- **Angular**: Bind directly to the `(selection)` event on the `s-select` tag.
+- **ReactJS**: Use a `ref` to attach an event listener to `my-own-select` and handle the selection event.
+- **Angular**: Bind directly to the `(selection)` event on the `my-own-select` tag.
 
 ## Compatibility
 
-`sselect` is built with the `customElements` API, making it natively compatible across modern browsers. It integrates seamlessly with popular frontend frameworks like ReactJS and Angular.
+`my-own-select` is built with the `customElements` API, making it natively compatible across modern browsers. It integrates seamlessly with popular frontend frameworks like ReactJS and Angular.
 
 ## Contributing
 
-If you'd like to contribute to `sselect`, please submit an issue or a pull request on our GitHub repository. Contributions, bug reports, and feature suggestions are welcome!
+If you'd like to contribute to `my-own-select`, please submit an issue or a pull request on our GitHub repository. Contributions, bug reports, and feature suggestions are welcome!
 
 ## License
 
@@ -148,7 +148,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
-Happy coding with `sselect`!
+Happy coding with `my-own-select`!
 
 ## Authors
 
