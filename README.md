@@ -24,8 +24,35 @@ To use `my-own-select` in your project, simply include it as a custom HTML eleme
    <Component></Component>
 </my-own-select>
 ```
+- **get Selected value**
+in order to get selected value of your option, it's possible to set a custom attribute on sigle item called `option-value` which can be different rather than text contained inside your html tag:
+```html
+<my-own-select>
+   <p option-value="foo">First option</p>
+   <h1 option-value="bar">Second option</h1>
+   <div>
+      <p>Third</p>
+      <h1>option</bar>
+   </div>
+   <Component></Component>
+</my-own-select>
+```
+the value is provided by a custom event called `selection` which can be detected also a simple eventListener (depends by technology do you want to use).
+For the above example, along the `selection` event, for the first item of select will be passed `foo` value, for the second one will be passed `bar`. For third element instead, because the attribute `option-value` is not set, will passed `innerText` found in DOM element
+```html
+<my-own-select>
+   <p option-value="foo">First option</p> <!--WILL GET 'foo' -->
+   <h1 option-value="bar">Second option</h1> <!--WILL GET 'bar' -->
+   <div>
+      <p>Third</p>
+      <h1>option</bar>
+   </div> <!--WILL GET 'Third\noption' -->
+   <Component></Component>
+</my-own-select>
+```
+### React (Javascript or Typescritpt)
 
-### ReactJS
+![image](https://cdn.iconscout.com/icon/free/png-256/free-react-logo-icon-download-in-svg-png-gif-file-formats--company-brand-world-logos-vol-4-pack-icons-282599.png?f=webp&w=200)
 
 For ReactJS, ensure you import and use the `my-own-select` component as a custom element within your JSX code. You may need to register the component to ensure it works as expected:
 
@@ -55,7 +82,8 @@ function App() {
 }
 ```
 
-### Angular
+### Angular 
+![image](https://avatars.githubusercontent.com/u/139426?s=200&v=4)
 
 For Angular projects, you may need to allow custom elements within your module by configuring `CUSTOM_ELEMENTS_SCHEMA`:
 
@@ -87,6 +115,125 @@ export class AppComponent {
     console.log("Selected option:", event.detail);
   }
 }
+```
+
+### Vue (Javascript or Typescritpt)
+![image](https://images.opencollective.com/vuejs/5447764/logo/200.png)
+For Vue projects, you can use `my-own-select` in your scripts:
+```html
+<script setup lang="ts">
+  import "my-own-select";
+  const onSelection = (event: CustomEvent<any>) => {
+    console.log(event);
+  };
+</script>
+```
+and listen for the `selection` event:
+```html
+  <my-own-select @selection="onSelection">
+    <p>First option</p>
+    <h1>Second option</h1>
+    <my-component></my-component>
+  </my-own-select>
+```
+
+### Solid (Javascript or Typescritpt)
+![image](https://app.opensauced.pizza/_next/image?url=https%3A%2F%2Fwww.github.com%2Fsolidjs.png%3Fsize%3D96&w=200&q=75)
+For Solid projects, you can import `my-own-select`:
+```typescript
+import 'my-own-select';
+```
+and use it in your JSX:
+```html
+  <my-own-select>
+    <p>First option</p>
+    <h1>Second option</h1>
+    <my-component></my-component>
+  </my-own-select>
+```
+for handle selection event:
+
+```typescript
+  const onSelection = (event:CustomEvent<any>) => {
+    console.log(event);
+  } 
+```
+```html
+  <my-own-select on:selection={onSelection}>
+    <p>First option</p>
+    <h1>Second option</h1>
+    <my-component></my-component>
+  </my-own-select>
+```
+
+### Qwik 
+![image](https://images.crunchbase.com/image/upload/c_pad,h_200,w_200,f_auto,q_auto:eco,dpr_1/zm3fmuvcsytxzpdwgnrw)
+For Qwik, ensure you import and use the `my-own-select` component as a custom element within your JSX code. You may need to register the component to ensure it works as expected:
+
+```typescript
+import 'my-own-select';
+
+export const App = component$(() => {
+  useOn('selection', $((event: CustomEvent) => {
+    console.log(event.detail);
+  }));
+
+  return (
+  <my-own-select window:selection={handleSelection$} >
+    <p option-value="hello">First option</p>
+    <h1>Second option</h1>
+    <my-component></my-component>
+  </my-own-select>
+  );
+});
+```
+
+### Svelte (Javascript, Typescritpt and SvelteKit)
+![image](https://icons.iconarchive.com/icons/simpleicons-team/simple/256/svelte-icon.png)
+For Svelte projects, you can use `my-own-select` in your scripts:
+```html
+<script setup lang="ts">
+  import "my-own-select";
+  const onSelection = (event: CustomEvent<any>) => {
+    console.log(event);
+  };
+</script>
+```
+and listen for the `selection` event:
+```html
+  <my-own-select on:selection={onSelection}>
+    <p>First option</p>
+    <h1>Second option</h1>
+    <my-component></my-component>
+  </my-own-select>
+```
+### Preact
+![image](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQByb1lg2F2f5IZhgCo7HDGVCwlzPCLRXHUXg&s)
+For Preact projects, you can import `my-own-select`:
+```typescript
+import 'my-own-select';
+```
+and use it in your JSX:
+```html
+  <my-own-select>
+    <p>First option</p>
+    <h1>Second option</h1>
+    <my-component></my-component>
+  </my-own-select>
+```
+for handle selection event:
+
+```typescript
+  const onSelection = (event:CustomEvent<any>) => {
+    console.log(event);
+  } 
+```
+```html
+  <my-own-select onselection={onSelection}>
+    <p>First option</p>
+    <h1>Second option</h1>
+    <my-component></my-component>
+  </my-own-select>
 ```
 
 ## CSS Customization
@@ -133,6 +280,11 @@ When an option is selected, `my-own-select` emits a custom event called `selecti
 
 - **ReactJS**: Use a `ref` to attach an event listener to `my-own-select` and handle the selection event.
 - **Angular**: Bind directly to the `(selection)` event on the `my-own-select` tag.
+- **Vue**: Bind directly to the `@selection` event on the `my-own-select` tag.
+- **Solid**: Bind directly to the `on:selection` event on the `my-own-select` tag.
+- **Qwik**: Use a `useOn` to attach an event listener to `my-own-select` and handle the selection event.
+- **Svelte**: Bind directly to the `on:selection` event on the `my-own-select` tag.
+- **Preact**: Bind directly to the `onselection` event on the `my-own-select` tag.
 
 ## Custom Arrow
 

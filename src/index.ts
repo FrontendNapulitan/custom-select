@@ -1,17 +1,32 @@
 import * as React from 'react';
+import type { JSX as SolidJSX } from 'solid-js';
+import type { JSX as PreactJSX } from 'preact';
+
 // Interfaccia per le props specifiche del componente
-export interface SSelectorProps extends React.HTMLAttributes<HTMLElement> {
+export interface MyOwnSelectProps extends React.HTMLAttributes<HTMLElement> {
 
 }
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      'my-own-select': React.DetailedHTMLProps<SSelectorProps, HTMLElement>;
+      'my-own-select': React.DetailedHTMLProps<MyOwnSelectProps, HTMLElement>;
     }
   }
 }
-
-
+declare module "solid-js" {
+  namespace JSX {
+    interface IntrinsicElements {
+      'my-own-select': SolidJSX.HTMLAttributes<any> & { children: Element[]; "on:selection": (event: CustomEvent<any>) => void; };
+    }
+  }
+}
+declare module "preact" {
+  namespace JSX {
+    interface IntrinsicElements {
+      'my-own-select': PreactJSX.DetailedHTMLProps<any> ;
+    }
+  }
+}
 export class MyOwnSelect extends HTMLElement {
   //select wrapper element
   select: HTMLButtonElement | null = null
@@ -81,7 +96,7 @@ export class MyOwnSelect extends HTMLElement {
     } else {
       this.removeAttribute('value')
     }
-    this.emit('selection', { value: item.value })
+    this.emit('selection', { value: item.value??item.html })
   }
   /**
    * selectElement
@@ -149,7 +164,7 @@ export class MyOwnSelect extends HTMLElement {
         } else {
           this.removeAttribute('value')
         }
-        this.emit('selection', { value: itemValue.value })
+        this.emit('selection', { value: itemValue.value??itemValue.html })
       }
     }
     if (event.key === 'ArrowDown') {
@@ -161,10 +176,11 @@ export class MyOwnSelect extends HTMLElement {
       if (selectedElementIndex === -1) {
         domElements[0].setAttribute('part', 'item-selected')
         domElements[0].scrollIntoView({ block: 'end' })
+        let itemValue = this.getItemValue(items[0])
+        this.emit('selection', {value : itemValue.value??itemValue.html})
       } else {
         domElements[selectedElementIndex].removeAttribute('part')
         domElements[selectedElementIndex].setAttribute('part', 'item')
-
         if (domElements[selectedElementIndex + 1]) {
           domElements[selectedElementIndex + 1].setAttribute(
             'part',
@@ -180,6 +196,8 @@ export class MyOwnSelect extends HTMLElement {
           } else {
             this.removeAttribute('value')
           }
+        this.emit('selection', {value : itemValue.value??itemValue.html})
+
         } else {
           domElements[0].removeAttribute('part')
           domElements[0].setAttribute('part', 'item-selected')
@@ -191,6 +209,7 @@ export class MyOwnSelect extends HTMLElement {
           } else {
             this.removeAttribute('value')
           }
+          this.emit('selection', {value: itemValue.value??itemValue.html})
         }
       }
     }
@@ -206,6 +225,9 @@ export class MyOwnSelect extends HTMLElement {
           'item-selected'
         )
         domElements[domElements.length - 1].scrollIntoView({ block: 'start' })
+        let itemValue = this.getItemValue(items[domElements.length - 1])
+        this.emit('selection', {value: itemValue.value??itemValue.html})
+
       } else {
         domElements[selectedElementIndex].removeAttribute('part')
         domElements[selectedElementIndex].setAttribute('part', 'item')
@@ -225,6 +247,7 @@ export class MyOwnSelect extends HTMLElement {
           } else {
             this.removeAttribute('value')
           }
+          this.emit('selection', {value: itemValue.value??itemValue.html})
         } else {
           domElements[domElements.length - 1].removeAttribute('part')
           domElements[domElements.length - 1].setAttribute(
@@ -232,13 +255,14 @@ export class MyOwnSelect extends HTMLElement {
             'item-selected'
           )
           domElements[domElements.length - 1].scrollIntoView({ block: 'end' })
-          let itemValue = this.getItemValue(items[domElements.length - 1])
-          ;(event.target as HTMLElement)!.children[0].innerHTML = itemValue.html
+          let itemValue = this.getItemValue(items[domElements.length - 1]);
+          (event.target as HTMLElement)!.children[0].innerHTML = itemValue.html
           if (itemValue.value) {
             this.setAttribute('value', itemValue.value)
           } else {
             this.removeAttribute('value')
           }
+          this.emit('selection', {value: itemValue.value??itemValue.html})
         }
       }
     }
@@ -424,4 +448,5 @@ export class MyOwnSelect extends HTMLElement {
   attributeChangedCallback(name: string, oldValue: any, newValue: any) {}
   adoptedCallback() {}
 }
+
 customElements.define('my-own-select', MyOwnSelect);

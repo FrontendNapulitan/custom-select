@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Una select custom pronta all'uso in tutti i progetti frontend!",
   "scripts": {
     "build": "bun build --target=node ./src/index.ts --outfile=dist/index.js && bun run build:declaration",
@@ -12,11 +12,13 @@
     "postbuild": "rimraf tsconfig.types.tsbuildinfo"
   },
   "devDependencies": {
+    "@types/react": "^18.3.12",
     "bun-types": "latest",
+    "preact": "^10.24.3",
     "prettier": "^3.3.3",
     "rimraf": "^6.0.1",
-    "typescript": "^5.6.3",
-    "@types/react": "^18.3.12"
+    "solid-js": "^1.9.3",
+    "typescript": "^5.6.3"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
@@ -37,7 +39,16 @@
     "React",
     "Angular",
     "UI component",
-    "customizable"
+    "customizable",
+    "custom select",
+    "Angular select",
+    "React select",
+    "Qwik select",
+    "Solidjs select",
+    "Preact select",
+    "Svelte select",
+    "Vuejs select",
+    "Vue select"
   ],
   "license": "MIT",
   "files": [
