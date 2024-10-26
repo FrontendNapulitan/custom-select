@@ -409,7 +409,7 @@ export class MyOwnSelect extends HTMLElement {
             }>
         </button>
         <button id="select" part="select" >
-            <div id="selectedElement">seleziona un elemento</div>
+            <div id="selectedElement">select a value</div>
             <div id="list" part="itemsContainer">
                 <slot></slot>
             </div>
