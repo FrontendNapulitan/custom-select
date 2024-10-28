@@ -119,6 +119,7 @@ export class AppComponent {
 
 ### Vue (Javascript or Typescritpt)
 ![image](https://images.opencollective.com/vuejs/5447764/logo/200.png)
+
 For Vue projects, you can use `my-own-select` in your scripts:
 ```html
 <script setup lang="ts">
@@ -139,6 +140,7 @@ and listen for the `selection` event:
 
 ### Solid (Javascript or Typescritpt)
 ![image](https://app.opensauced.pizza/_next/image?url=https%3A%2F%2Fwww.github.com%2Fsolidjs.png%3Fsize%3D96&w=200&q=75)
+
 For Solid projects, you can import `my-own-select`:
 ```typescript
 import 'my-own-select';
@@ -168,6 +170,7 @@ for handle selection event:
 
 ### Qwik 
 ![image](https://images.crunchbase.com/image/upload/c_pad,h_200,w_200,f_auto,q_auto:eco,dpr_1/zm3fmuvcsytxzpdwgnrw)
+
 For Qwik, ensure you import and use the `my-own-select` component as a custom element within your JSX code. You may need to register the component to ensure it works as expected:
 
 ```typescript
@@ -190,6 +193,7 @@ export const App = component$(() => {
 
 ### Svelte (Javascript, Typescritpt and SvelteKit)
 ![image](https://icons.iconarchive.com/icons/simpleicons-team/simple/256/svelte-icon.png)
+
 For Svelte projects, you can use `my-own-select` in your scripts:
 ```html
 <script setup lang="ts">
@@ -209,6 +213,7 @@ and listen for the `selection` event:
 ```
 ### Preact
 ![image](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQByb1lg2F2f5IZhgCo7HDGVCwlzPCLRXHUXg&s)
+
 For Preact projects, you can import `my-own-select`:
 ```typescript
 import 'my-own-select';

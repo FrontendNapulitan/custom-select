@@ -1,32 +1,8 @@
-import * as React from 'react';
-import type { JSX as SolidJSX } from 'solid-js';
-import type { JSX as PreactJSX } from 'preact';
-
-// Interfaccia per le props specifiche del componente
-export interface MyOwnSelectProps extends React.HTMLAttributes<HTMLElement> {
-
-}
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'my-own-select': React.DetailedHTMLProps<MyOwnSelectProps, HTMLElement>;
-    }
-  }
-}
-declare module "solid-js" {
-  namespace JSX {
-    interface IntrinsicElements {
-      'my-own-select': SolidJSX.HTMLAttributes<any> & { children: Element[]; "on:selection": (event: CustomEvent<any>) => void; };
-    }
-  }
-}
-declare module "preact" {
-  namespace JSX {
-    interface IntrinsicElements {
-      'my-own-select': PreactJSX.DetailedHTMLProps<any> ;
-    }
-  }
-}
+import './types';
+const customEventName = 'selection';
+const optionValueAttributeName = 'option-value';
+const selectedItemPartName = 'item-selected';
+const itemPartName = 'item';
 export class MyOwnSelect extends HTMLElement {
   //select wrapper element
   select: HTMLButtonElement | null = null
@@ -57,13 +33,13 @@ export class MyOwnSelect extends HTMLElement {
    * getItemValue
    * @param {HTMLElement} el
    * @returns {{value:string, html:string}}
-   * @description get value and innerText of selected element
+   * @description get value and textContent of selected element
    */
   getItemValue(el: HTMLElement) {
     const item = this.searchAItem(el)
     return {
-      value: item.children[0].getAttribute('option-value'),
-      html: (item.children[0] as HTMLElement).innerText,
+      value: item.children[0].getAttribute(optionValueAttributeName),
+      html: (item.children[0] as HTMLElement).textContent,
     }
   }
   /**
@@ -78,6 +54,11 @@ export class MyOwnSelect extends HTMLElement {
       return item.parentElement as HTMLElement
     return this.searchAItem(item.parentElement as HTMLElement)
   }
+
+  searchOptionValueAttribute(item: HTMLElement):string {
+    if (item.children.length === 0) return item.getAttribute('option-value') ?? item.textContent!;
+    return this.searchOptionValueAttribute(item.children[0] as HTMLElement);
+  }
   /**
    * clickItem
    * @param {Event} event
@@ -87,16 +68,11 @@ export class MyOwnSelect extends HTMLElement {
     event.preventDefault()
     event.stopPropagation()
     event.stopImmediatePropagation()
-    let item = this.getItemValue(this.searchAItem(event.target as HTMLElement))
-    this.select!.children[0]!.innerHTML = item.html
+    let item = this.getItemValue(event.target as HTMLElement);
+    this.select!.children[0]!.innerHTML = item.html!
     ;(this.select!.previousElementSibling as HTMLElement).focus()
     this.select!.blur()
-    if (item.value) {
-      this.setAttribute('value', item.value)
-    } else {
-      this.removeAttribute('value')
-    }
-    this.emit('selection', { value: item.value??item.html })
+    this.setAttribute('value', item.value??item.html!)
   }
   /**
    * selectElement
@@ -109,22 +85,22 @@ export class MyOwnSelect extends HTMLElement {
     )
     let selectedElementIndex = items.findIndex(
       (e) =>
-        e.hasAttribute('part') && e.getAttribute('part') === 'item-selected'
+        e.hasAttribute('part') && e.getAttribute('part') === selectedItemPartName
     )
     if (selectedElementIndex !== -1) {
       items.forEach((el) => {
         const element = this.searchAItem(el)
         if (
           !element.hasAttribute('part') ||
-          element.getAttribute('part') !== 'item'
+          element.getAttribute('part') !== itemPartName
         ) {
-          element.setAttribute('part', 'item')
+          element.setAttribute('part', itemPartName)
         }
       })
     }
     this.searchAItem(event.target as HTMLElement).setAttribute(
       'part',
-      'item-selected'
+      selectedItemPartName
     )
   }
   /**
@@ -138,6 +114,26 @@ export class MyOwnSelect extends HTMLElement {
     }
   }
   /**
+   * bindInitialValue
+   * @param {string} value 
+   * @returns {string | undefined}
+   * @description set initialValue to select when the element is rendered
+   */
+  bindInitialValue(value:string | null):string | undefined{
+    let items = Array.prototype.slice.call(
+      (this.shadowRoot?.getElementById('list'))!.children
+    )
+    let returnValue;
+    items.forEach((el: HTMLElement) => {
+      el.setAttribute('part', itemPartName);
+      if(this.searchOptionValueAttribute(el) === value){
+        el.setAttribute('part', selectedItemPartName);
+        returnValue = el.textContent;
+      }
+    })
+    return returnValue;
+  }
+  /**
    * keyup
    * @param {KeyboardEvent} event
    * @description handle keyup event
@@ -149,12 +145,12 @@ export class MyOwnSelect extends HTMLElement {
     let domElements = (event.target as HTMLElement)!.children[1].children
     let selectedElementIndex = items.findIndex(
       (e) =>
-        e.hasAttribute('part') && e.getAttribute('part') === 'item-selected'
+        e.hasAttribute('part') && e.getAttribute('part') === selectedItemPartName
     )
     if (event.key === 'Enter') {
       if (selectedElementIndex !== -1) {
         let itemValue = this.getItemValue(items[selectedElementIndex])
-        ;(event.target as HTMLElement)!.children[0].innerHTML = itemValue.html
+        ;(event.target as HTMLElement)!.children[0].innerHTML = itemValue.html!
         ;(
           (event.target as HTMLElement)!.previousElementSibling as HTMLElement
         ).focus()
@@ -164,105 +160,85 @@ export class MyOwnSelect extends HTMLElement {
         } else {
           this.removeAttribute('value')
         }
-        this.emit('selection', { value: itemValue.value??itemValue.html })
+        this.setAttribute('value', itemValue.value??itemValue.html!)
       }
     }
     if (event.key === 'ArrowDown') {
       items.forEach((el: HTMLElement) => {
-        if (!el.hasAttribute('part') || el.getAttribute('part') !== 'item') {
-          el.setAttribute('part', 'item')
+        if (!el.hasAttribute('part') || el.getAttribute('part') !== itemPartName) {
+          el.setAttribute('part', itemPartName)
         }
       })
       if (selectedElementIndex === -1) {
-        domElements[0].setAttribute('part', 'item-selected')
+        domElements[0].setAttribute('part', selectedItemPartName)
         domElements[0].scrollIntoView({ block: 'end' })
         let itemValue = this.getItemValue(items[0])
-        this.emit('selection', {value : itemValue.value??itemValue.html})
+        this.setAttribute('value', itemValue.value??itemValue.html!)
       } else {
         domElements[selectedElementIndex].removeAttribute('part')
-        domElements[selectedElementIndex].setAttribute('part', 'item')
+        domElements[selectedElementIndex].setAttribute('part', itemPartName)
         if (domElements[selectedElementIndex + 1]) {
           domElements[selectedElementIndex + 1].setAttribute(
             'part',
-            'item-selected'
+            selectedItemPartName
           )
           domElements[selectedElementIndex + 1].scrollIntoView({
             block: 'end',
           })
-          let itemValue = this.getItemValue(items[selectedElementIndex + 1])
-          ;(event.target as HTMLElement)!.children[0].innerHTML = itemValue.html
-          if (itemValue.value) {
-            this.setAttribute('value', itemValue.value)
-          } else {
-            this.removeAttribute('value')
-          }
-        this.emit('selection', {value : itemValue.value??itemValue.html})
+          let itemValue = this.getItemValue(items[selectedElementIndex + 1]);
+          (event.target as HTMLElement)!.children[0].innerHTML = itemValue.html!
+          this.setAttribute('value', itemValue.value??itemValue.html!)
 
         } else {
           domElements[0].removeAttribute('part')
-          domElements[0].setAttribute('part', 'item-selected')
+          domElements[0].setAttribute('part', selectedItemPartName)
           domElements[0].scrollIntoView({ block: 'start' })
           let itemValue = this.getItemValue(items[0])
-          ;(event.target as HTMLElement)!.children[0].innerHTML = itemValue.html
-          if (itemValue.value) {
-            this.setAttribute('value', itemValue.value)
-          } else {
-            this.removeAttribute('value')
-          }
-          this.emit('selection', {value: itemValue.value??itemValue.html})
+          ;(event.target as HTMLElement)!.children[0].innerHTML = itemValue.html!
+          this.setAttribute('value', itemValue.value??itemValue.html!)
         }
       }
     }
     if (event.key === 'ArrowUp') {
       items.forEach((el: HTMLElement) => {
-        if (!el.hasAttribute('part') || el.getAttribute('part') !== 'item') {
-          el.setAttribute('part', 'item')
+        if (!el.hasAttribute('part') || el.getAttribute('part') !== itemPartName) {
+          el.setAttribute('part', itemPartName)
         }
       })
       if (selectedElementIndex === -1) {
         domElements[domElements.length - 1].setAttribute(
           'part',
-          'item-selected'
+          selectedItemPartName
         )
         domElements[domElements.length - 1].scrollIntoView({ block: 'start' })
         let itemValue = this.getItemValue(items[domElements.length - 1])
-        this.emit('selection', {value: itemValue.value??itemValue.html})
+        this.setAttribute('value', itemValue.value??itemValue.html!)
 
       } else {
         domElements[selectedElementIndex].removeAttribute('part')
-        domElements[selectedElementIndex].setAttribute('part', 'item')
+        domElements[selectedElementIndex].setAttribute('part', itemPartName)
         if (domElements[selectedElementIndex - 1]) {
           domElements[selectedElementIndex - 1].removeAttribute('part')
           domElements[selectedElementIndex - 1].setAttribute(
             'part',
-            'item-selected'
+            selectedItemPartName
           )
           domElements[selectedElementIndex - 1].scrollIntoView({
             block: 'start',
           })
           let itemValue = this.getItemValue(items[selectedElementIndex - 1])
-          ;(event.target as HTMLElement)!.children[0].innerHTML = itemValue.html
-          if (itemValue.value) {
-            this.setAttribute('value', itemValue.value)
-          } else {
-            this.removeAttribute('value')
-          }
-          this.emit('selection', {value: itemValue.value??itemValue.html})
+          ;(event.target as HTMLElement)!.children[0].innerHTML = itemValue.html!
+          this.setAttribute('value', itemValue.value??itemValue.html!)
         } else {
           domElements[domElements.length - 1].removeAttribute('part')
           domElements[domElements.length - 1].setAttribute(
             'part',
-            'item-selected'
+            selectedItemPartName
           )
           domElements[domElements.length - 1].scrollIntoView({ block: 'end' })
           let itemValue = this.getItemValue(items[domElements.length - 1]);
-          (event.target as HTMLElement)!.children[0].innerHTML = itemValue.html
-          if (itemValue.value) {
-            this.setAttribute('value', itemValue.value)
-          } else {
-            this.removeAttribute('value')
-          }
-          this.emit('selection', {value: itemValue.value??itemValue.html})
+          (event.target as HTMLElement)!.children[0].innerHTML = itemValue.html!
+          this.setAttribute('value', itemValue.value??itemValue.html!)
         }
       }
     }
@@ -310,27 +286,30 @@ export class MyOwnSelect extends HTMLElement {
    * distributeChildren
    * @description distribute children and replace slot content
    */
-  distributeChildren() {
-    const slot: any = this.shadowRoot!.querySelector('slot')
-    slot.addEventListener('slotchange', () => {
-      const assignedNodes = slot.assignedNodes()
-      slot.remove()
-      const listContainer: any = this.shadowRoot!.querySelector('#list')
-      assignedNodes.forEach((node: any) => {
-        if (node.nodeType === Node.ELEMENT_NODE) {
-          const wrapper = document.createElement('a')
-          wrapper.setAttribute('part', 'item')
-          wrapper.appendChild(node)
-          listContainer.appendChild(wrapper)
-        }
-      })
-      Array.prototype.slice
-        .call(this.shadowRoot!.getElementById('list')!.children)
-        .forEach((element) => {
-          element.addEventListener('click', this.clickItem.bind(this))
-          element.addEventListener('mouseover', this.selectElement.bind(this))
+   distributeChildren() {
+  
+      const slot: any = this.shadowRoot!.querySelector('slot')
+      slot.addEventListener('slotchange', () => {
+        const assignedNodes = slot.assignedNodes()
+        slot.remove()
+        const listContainer: any = this.shadowRoot!.querySelector('#list')
+        assignedNodes.forEach((node: any) => {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            const wrapper = document.createElement('a')
+            wrapper.setAttribute('part', itemPartName)
+            wrapper.appendChild(node)
+            listContainer.appendChild(wrapper)
+          }
         })
-    })
+        Array.prototype.slice
+          .call(this.shadowRoot!.getElementById('list')!.children)
+          .forEach((element) => {
+            element.addEventListener('click', this.clickItem.bind(this))
+            element.addEventListener('mouseover', this.selectElement.bind(this))
+          })
+          let selectionValue = this.bindInitialValue(this.getAttribute('value'));
+          this.select!.children[0]!.innerHTML = selectionValue??this.getAttribute('value')!;
+      })
   }
   /**
    * Emit a custom event
@@ -438,14 +417,22 @@ export class MyOwnSelect extends HTMLElement {
     shadow
       .getElementById('focusButton')!
       .addEventListener('keyup', this.focusSelect.bind(this))
-    this.distributeChildren()
-    this.loadOptionsContainer()
+      this.loadOptionsContainer();
+    this.distributeChildren();
+
   }
   disconnectedCallback() {}
   static get observedAttributes() {
-    return []
+    return ['value']
   }
-  attributeChangedCallback(name: string, oldValue: any, newValue: any) {}
+  attributeChangedCallback(name: string, oldValue: any, newValue: any) {
+    if(this.select !== null && newValue !== oldValue){
+      let selectionValue = this.bindInitialValue(newValue);
+      this.select!.children[0]!.innerHTML = selectionValue??newValue;
+      this.emit(customEventName, {value: newValue})
+    }
+    
+  }
   adoptedCallback() {}
 }
 
