@@ -217,6 +217,7 @@ export class MyOwnSelect extends HTMLElement {
       } else {
         domElements[selectedElementIndex].removeAttribute('part')
         domElements[selectedElementIndex].setAttribute('part', itemPartName)
+        domElements[selectedElementIndex].setAttribute('part', itemPartName)
         if (domElements[selectedElementIndex + 1]) {
           domElements[selectedElementIndex + 1].setAttribute(
             'part',
@@ -231,6 +232,7 @@ export class MyOwnSelect extends HTMLElement {
           this.setAttribute('value', itemValue.value ?? itemValue.html!)
         } else {
           domElements[0].removeAttribute('part')
+          domElements[0].setAttribute('part', selectedItemPartName)
           domElements[0].setAttribute('part', selectedItemPartName)
           domElements[0].scrollIntoView({ block: 'start' })
           let itemValue = this.getItemValue(items[0])
@@ -259,6 +261,7 @@ export class MyOwnSelect extends HTMLElement {
         this.setAttribute('value', itemValue.value ?? itemValue.html!)
       } else {
         domElements[selectedElementIndex].removeAttribute('part')
+        domElements[selectedElementIndex].setAttribute('part', itemPartName)
         domElements[selectedElementIndex].setAttribute('part', itemPartName)
         if (domElements[selectedElementIndex - 1]) {
           domElements[selectedElementIndex - 1].removeAttribute('part')

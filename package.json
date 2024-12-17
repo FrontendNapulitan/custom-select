@@ -53,6 +53,32 @@
     "Vuejs select",
     "Vue select"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FrontendNapulitan/my-own-select.git"
+  },
+  "bugs": {
+    "url": "https://github.com/FrontendNapulitan/my-own-select/issues"
+  },
+  "keywords": [
+    "select",
+    "dropdown",
+    "custom elements",
+    "web components",
+    "React",
+    "Angular",
+    "UI component",
+    "customizable",
+    "custom select",
+    "Angular select",
+    "React select",
+    "Qwik select",
+    "Solidjs select",
+    "Preact select",
+    "Svelte select",
+    "Vuejs select",
+    "Vue select"
+  ],
   "license": "MIT",
   "files": [
     "dist/*.js",

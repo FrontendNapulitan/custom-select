@@ -1,13 +1,17 @@
 
 # my-own-select
+# my-own-select
 
+`my-own-select` is a highly customizable dropdown select component built using the `customElements` API. It is compatible with both ReactJS and Angular, and it allows for in-depth customization of the dropdown appearance and behavior. `my-own-select` offers a flexible structure, allowing you to insert HTML tags, components, and styled elements as options within the select dropdown.
 `my-own-select` is a highly customizable dropdown select component built using the `customElements` API. It is compatible with both ReactJS and Angular, and it allows for in-depth customization of the dropdown appearance and behavior. `my-own-select` offers a flexible structure, allowing you to insert HTML tags, components, and styled elements as options within the select dropdown.
 
 ## Installation
 
 You can install `my-own-select` via npm:
+You can install `my-own-select` via npm:
 
 ```bash
+npm install my-own-select
 npm install my-own-select
 ```
 
@@ -113,8 +117,10 @@ my-own-select is fully compatible with form context:
 ![image](https://cdn.iconscout.com/icon/free/png-256/free-react-logo-icon-download-in-svg-png-gif-file-formats--company-brand-world-logos-vol-4-pack-icons-282599.png?f=webp&w=200)
 
 For ReactJS, ensure you import and use the `my-own-select` component as a custom element within your JSX code. You may need to register the component to ensure it works as expected:
+For ReactJS, ensure you import and use the `my-own-select` component as a custom element within your JSX code. You may need to register the component to ensure it works as expected:
 
 ```javascript
+import 'my-own-select';
 import 'my-own-select';
 
 function App() {
@@ -132,9 +138,11 @@ function App() {
 
   return (
     <my-own-select ref={selectRef}>
+    <my-own-select ref={selectRef}>
       <p>First option</p>
       <h1>Second option</h1>
       <MyComponent />
+    </my-own-select>
     </my-own-select>
   );
 }
@@ -142,11 +150,14 @@ function App() {
 
 ### Angular 
 ![image](https://avatars.githubusercontent.com/u/139426?s=200&v=4)
+### Angular 
+![image](https://avatars.githubusercontent.com/u/139426?s=200&v=4)
 
 For Angular projects, you may need to allow custom elements within your module by configuring `CUSTOM_ELEMENTS_SCHEMA`:
 
 ```typescript
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import 'my-own-select';
 import 'my-own-select';
 
 @NgModule({
@@ -156,12 +167,15 @@ export class AppModule {}
 ```
 
 Then, you can use `my-own-select` in your Angular templates and listen for the `selection` event:
+Then, you can use `my-own-select` in your Angular templates and listen for the `selection` event:
 
 ```html
+<my-own-select (selection)="onSelection($event)">
 <my-own-select (selection)="onSelection($event)">
    <p>First option</p>
    <h1>Second option</h1>
    <my-component></my-component>
+</my-own-select>
 </my-own-select>
 ```
 
@@ -405,9 +419,11 @@ for handle selection event:
 ## CSS Customization
 
 `my-own-select` provides parts that can be styled via the `::part()` selector. This allows you to fully customize the dropdown’s appearance:
+`my-own-select` provides parts that can be styled via the `::part()` selector. This allows you to fully customize the dropdown’s appearance:
 
 - **Select container**: Customize the main select element.
   ```css
+  my-own-select::part(select) {
   my-own-select::part(select) {
     /* Add your styles here */
     background-color: lightgray;
@@ -418,6 +434,7 @@ for handle selection event:
 
 - **Options container**: Style the container holding all options.
   ```css
+  my-own-select::part(itemsContainer) {
   my-own-select::part(itemsContainer) {
     /* Add your styles here */
     background-color: white;
@@ -430,10 +447,12 @@ for handle selection event:
 - **Single option item**: Customize individual options.
   ```css
   my-own-select::part(item) {
+  my-own-select::part(item) {
     /* Add your styles here */
     padding: 8px;
     cursor: pointer;
   }
+  my-own-select::part(item-selected) {
   my-own-select::part(item-selected) {
     /* Selected item */
     background-color: #f0f0f0;
@@ -443,7 +462,34 @@ for handle selection event:
 ## Custom Event: `selection`
 
 When an option is selected, `my-own-select` emits a custom event called `selection`. This can be intercepted in both ReactJS and Angular:
+When an option is selected, `my-own-select` emits a custom event called `selection`. This can be intercepted in both ReactJS and Angular:
 
+- **ReactJS**: Use a `ref` to attach an event listener to `my-own-select` and handle the selection event.
+- **Angular**: Bind directly to the `(selection)` event on the `my-own-select` tag.
+- **Vue**: Bind directly to the `@selection` event on the `my-own-select` tag.
+- **Solid**: Bind directly to the `on:selection` event on the `my-own-select` tag.
+- **Qwik**: Use a `useOn` to attach an event listener to `my-own-select` and handle the selection event.
+- **Svelte**: Bind directly to the `on:selection` event on the `my-own-select` tag.
+- **Preact**: Bind directly to the `onselection` event on the `my-own-select` tag.
+
+## Custom Arrow
+
+You can customize the arrow of your select simply writing this:
+```html
+<my-own-select >
+   <p>First option</p>
+   <h1>Second option</h1>
+   <img slot="arrowImg" src="yourUrl" alt="yourAlt" />
+</my-own-select>
+```
+everywhere in your select, event at begin or in the middle of your options:
+```html
+<my-own-select >
+   <p>First option</p>
+   <img slot="arrowImg" src="yourUrl" alt="yourAlt" />
+   <h1>Second option</h1>
+</my-own-select>
+```
 - **ReactJS**: Use a `ref` to attach an event listener to `my-own-select` and handle the selection event.
 - **Angular**: Bind directly to the `(selection)` event on the `my-own-select` tag.
 - **Vue**: Bind directly to the `@selection` event on the `my-own-select` tag.
@@ -474,9 +520,11 @@ everywhere in your select, event at begin or in the middle of your options:
 ## Compatibility
 
 `my-own-select` is built with the `customElements` API, making it natively compatible across modern browsers. It integrates seamlessly with popular frontend frameworks like ReactJS and Angular.
+`my-own-select` is built with the `customElements` API, making it natively compatible across modern browsers. It integrates seamlessly with popular frontend frameworks like ReactJS and Angular.
 
 ## Contributing
 
+If you'd like to contribute to `my-own-select`, please submit an issue or a pull request on our GitHub repository. Contributions, bug reports, and feature suggestions are welcome!
 If you'd like to contribute to `my-own-select`, please submit an issue or a pull request on our GitHub repository. Contributions, bug reports, and feature suggestions are welcome!
 
 ## License
@@ -485,6 +533,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
+Happy coding with `my-own-select`!
 Happy coding with `my-own-select`!
 
 ## Authors
