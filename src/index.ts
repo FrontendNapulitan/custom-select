@@ -1,7 +1,18 @@
-export * from './types';
-export class Sselect extends HTMLElement {
+import { styles } from './styles'
+import { template } from './template'
+import './types'
+const customEventName = 'selection'
+const optionValueAttributeName = 'option-value'
+const selectedItemPartName = 'item-selected'
+const itemPartName = 'item'
+const placeholderValueAttributeName = 'option-placeholder'
+const placeholderDefaultText = 'select a value'
+
+export class MyOwnSelect extends HTMLElement {
   //select wrapper element
   select: HTMLButtonElement | null = null
+  static formAssociated = true
+
   //detect is browser is safari or firefox
   isFirefoxOrSafari =
     navigator.userAgent.toLowerCase().includes('firefox') ||
@@ -29,13 +40,18 @@ export class Sselect extends HTMLElement {
    * getItemValue
    * @param {HTMLElement} el
    * @returns {{value:string, html:string}}
-   * @description get value and innerText of selected element
+   * @description get value and textContent of selected element
    */
   getItemValue(el: HTMLElement) {
     const item = this.searchAItem(el)
     return {
-      value: item.children[0].getAttribute('option-value'),
-      html: (item.children[0] as HTMLElement).innerText,
+      value:
+        item.children[0].getAttribute(placeholderValueAttributeName) !== null
+          ? ''
+          : item.children[0].getAttribute(optionValueAttributeName) !== null
+            ? item.children[0].getAttribute(optionValueAttributeName)
+            : item.children[0].textContent,
+      html: (item.children[0] as HTMLElement).textContent,
     }
   }
   /**
@@ -50,6 +66,19 @@ export class Sselect extends HTMLElement {
       return item.parentElement as HTMLElement
     return this.searchAItem(item.parentElement as HTMLElement)
   }
+
+  searchOptionValueAttribute(item: HTMLElement): string {
+    if (item.children.length === 0)
+      return item.getAttribute('option-value') ?? item.textContent!
+    return this.searchOptionValueAttribute(item.children[0] as HTMLElement)
+  }
+  searchOptionPlaceholderAttribute(item: HTMLElement): string | undefined {
+    if (item.children.length === 0)
+      return item.getAttribute(placeholderValueAttributeName)!
+    return this.searchOptionPlaceholderAttribute(
+      item.children[0] as HTMLElement
+    )
+  }
   /**
    * clickItem
    * @param {Event} event
@@ -59,16 +88,12 @@ export class Sselect extends HTMLElement {
     event.preventDefault()
     event.stopPropagation()
     event.stopImmediatePropagation()
-    let item = this.getItemValue(this.searchAItem(event.target as HTMLElement))
-    this.select!.children[0]!.innerHTML = item.html
+    let item = this.getItemValue(event.target as HTMLElement)
+    this.select!.children[0]!.innerHTML = item.html!
     ;(this.select!.previousElementSibling as HTMLElement).focus()
     this.select!.blur()
-    if (item.value) {
-      this.setAttribute('value', item.value)
-    } else {
-      this.removeAttribute('value')
-    }
-    this.emit('selection', { value: item.value })
+    this._value = item.value!
+    // this.setAttribute('value', item.value!);
   }
   /**
    * selectElement
@@ -81,22 +106,23 @@ export class Sselect extends HTMLElement {
     )
     let selectedElementIndex = items.findIndex(
       (e) =>
-        e.hasAttribute('part') && e.getAttribute('part') === 'item-selected'
+        e.hasAttribute('part') &&
+        e.getAttribute('part') === selectedItemPartName
     )
     if (selectedElementIndex !== -1) {
       items.forEach((el) => {
         const element = this.searchAItem(el)
         if (
           !element.hasAttribute('part') ||
-          element.getAttribute('part') !== 'item'
+          element.getAttribute('part') !== itemPartName
         ) {
-          element.setAttribute('part', 'item')
+          element.setAttribute('part', itemPartName)
         }
       })
     }
     this.searchAItem(event.target as HTMLElement).setAttribute(
       'part',
-      'item-selected'
+      selectedItemPartName
     )
   }
   /**
@@ -110,6 +136,40 @@ export class Sselect extends HTMLElement {
     }
   }
   /**
+   * bindInitialValue
+   * @param {string} value
+   * @returns {string | undefined}
+   * @description set initialValue to select when the element is rendered
+   */
+  bindInitialValue(value: string | null = ''): string | undefined | null {
+    let items = Array.prototype.slice.call(
+      (this.shadowRoot?.getElementById('list'))!.children
+    )
+    let placeholder = items.find(
+      (i) => this.searchOptionPlaceholderAttribute(i) !== null
+    )
+    let foundValue = items.find(
+      (i) =>
+        this.searchOptionValueAttribute(i) !== null &&
+        this.searchOptionValueAttribute(i) === value
+    )
+
+    let returnValue =
+      foundValue ?? placeholder?.textContent ?? placeholderDefaultText
+    items.forEach((el: HTMLElement) => {
+      el.setAttribute('part', itemPartName)
+      let placeholder = el.children[0].getAttribute('option-placeholder')
+      if (
+        (placeholder !== null && placeholder === value) ||
+        this.searchOptionValueAttribute(el) === value
+      ) {
+        el.setAttribute('part', selectedItemPartName)
+        returnValue = this.searchOptionValueAttribute(el)
+      }
+    })
+    return returnValue
+  }
+  /**
    * keyup
    * @param {KeyboardEvent} event
    * @description handle keyup event
@@ -121,12 +181,13 @@ export class Sselect extends HTMLElement {
     let domElements = (event.target as HTMLElement)!.children[1].children
     let selectedElementIndex = items.findIndex(
       (e) =>
-        e.hasAttribute('part') && e.getAttribute('part') === 'item-selected'
+        e.hasAttribute('part') &&
+        e.getAttribute('part') === selectedItemPartName
     )
     if (event.key === 'Enter') {
       if (selectedElementIndex !== -1) {
         let itemValue = this.getItemValue(items[selectedElementIndex])
-        ;(event.target as HTMLElement)!.children[0].innerHTML = itemValue.html
+        ;(event.target as HTMLElement)!.children[0].innerHTML = itemValue.html!
         ;(
           (event.target as HTMLElement)!.previousElementSibling as HTMLElement
         ).focus()
@@ -136,96 +197,93 @@ export class Sselect extends HTMLElement {
         } else {
           this.removeAttribute('value')
         }
-        this.emit('selection', { value: itemValue.value })
+        this.setAttribute('value', itemValue.value ?? itemValue.html!)
       }
     }
     if (event.key === 'ArrowDown') {
       items.forEach((el: HTMLElement) => {
-        if (!el.hasAttribute('part') || el.getAttribute('part') !== 'item') {
-          el.setAttribute('part', 'item')
+        if (
+          !el.hasAttribute('part') ||
+          el.getAttribute('part') !== itemPartName
+        ) {
+          el.setAttribute('part', itemPartName)
         }
       })
       if (selectedElementIndex === -1) {
-        domElements[0].setAttribute('part', 'item-selected')
+        domElements[0].setAttribute('part', selectedItemPartName)
         domElements[0].scrollIntoView({ block: 'end' })
+        let itemValue = this.getItemValue(items[0])
+        this.setAttribute('value', itemValue.value ?? itemValue.html!)
       } else {
         domElements[selectedElementIndex].removeAttribute('part')
-        domElements[selectedElementIndex].setAttribute('part', 'item')
-
+        domElements[selectedElementIndex].setAttribute('part', itemPartName)
         if (domElements[selectedElementIndex + 1]) {
           domElements[selectedElementIndex + 1].setAttribute(
             'part',
-            'item-selected'
+            selectedItemPartName
           )
           domElements[selectedElementIndex + 1].scrollIntoView({
             block: 'end',
           })
           let itemValue = this.getItemValue(items[selectedElementIndex + 1])
-          ;(event.target as HTMLElement)!.children[0].innerHTML = itemValue.html
-          if (itemValue.value) {
-            this.setAttribute('value', itemValue.value)
-          } else {
-            this.removeAttribute('value')
-          }
+          ;(event.target as HTMLElement)!.children[0].innerHTML =
+            itemValue.html!
+          this.setAttribute('value', itemValue.value ?? itemValue.html!)
         } else {
           domElements[0].removeAttribute('part')
-          domElements[0].setAttribute('part', 'item-selected')
+          domElements[0].setAttribute('part', selectedItemPartName)
           domElements[0].scrollIntoView({ block: 'start' })
           let itemValue = this.getItemValue(items[0])
-          ;(event.target as HTMLElement)!.children[0].innerHTML = itemValue.html
-          if (itemValue.value) {
-            this.setAttribute('value', itemValue.value)
-          } else {
-            this.removeAttribute('value')
-          }
+          ;(event.target as HTMLElement)!.children[0].innerHTML =
+            itemValue.html!
+          this.setAttribute('value', itemValue.value ?? itemValue.html!)
         }
       }
     }
     if (event.key === 'ArrowUp') {
       items.forEach((el: HTMLElement) => {
-        if (!el.hasAttribute('part') || el.getAttribute('part') !== 'item') {
-          el.setAttribute('part', 'item')
+        if (
+          !el.hasAttribute('part') ||
+          el.getAttribute('part') !== itemPartName
+        ) {
+          el.setAttribute('part', itemPartName)
         }
       })
       if (selectedElementIndex === -1) {
         domElements[domElements.length - 1].setAttribute(
           'part',
-          'item-selected'
+          selectedItemPartName
         )
         domElements[domElements.length - 1].scrollIntoView({ block: 'start' })
+        let itemValue = this.getItemValue(items[domElements.length - 1])
+        this.setAttribute('value', itemValue.value ?? itemValue.html!)
       } else {
         domElements[selectedElementIndex].removeAttribute('part')
-        domElements[selectedElementIndex].setAttribute('part', 'item')
+        domElements[selectedElementIndex].setAttribute('part', itemPartName)
         if (domElements[selectedElementIndex - 1]) {
           domElements[selectedElementIndex - 1].removeAttribute('part')
           domElements[selectedElementIndex - 1].setAttribute(
             'part',
-            'item-selected'
+            selectedItemPartName
           )
           domElements[selectedElementIndex - 1].scrollIntoView({
             block: 'start',
           })
           let itemValue = this.getItemValue(items[selectedElementIndex - 1])
-          ;(event.target as HTMLElement)!.children[0].innerHTML = itemValue.html
-          if (itemValue.value) {
-            this.setAttribute('value', itemValue.value)
-          } else {
-            this.removeAttribute('value')
-          }
+          ;(event.target as HTMLElement)!.children[0].innerHTML =
+            itemValue.html!
+          this.setAttribute('value', itemValue.value ?? itemValue.html!)
         } else {
           domElements[domElements.length - 1].removeAttribute('part')
           domElements[domElements.length - 1].setAttribute(
             'part',
-            'item-selected'
+            selectedItemPartName
           )
           domElements[domElements.length - 1].scrollIntoView({ block: 'end' })
           let itemValue = this.getItemValue(items[domElements.length - 1])
-          ;(event.target as HTMLElement)!.children[0].innerHTML = itemValue.html
-          if (itemValue.value) {
-            this.setAttribute('value', itemValue.value)
-          } else {
-            this.removeAttribute('value')
-          }
+          ;(event.target as HTMLElement)!.children[0].innerHTML =
+            itemValue.html!
+          this.setAttribute('value', itemValue.value ?? itemValue.html!)
         }
       }
     }
@@ -246,6 +304,26 @@ export class Sselect extends HTMLElement {
         } else {
           list.style.bottom = `calc(anchor(top))`
           list.style.top = 'unset'
+          let computedStyles = getComputedStyle(list)
+          if (computedStyles.borderRadius.length > 0) {
+            list.style.borderRadius = computedStyles.borderRadius
+              .split(' ')
+              .reverse()
+              .join(' ')
+          }
+          if (computedStyles.borderBottom.length > 0) {
+            list.style.borderTop = computedStyles.borderBottom
+            list.style.borderBottom = 'none'
+          }
+          if (getComputedStyle(list.parentElement).borderBottom.length > 0) {
+            // list.parentElement.style.setProperty('--btrr', '0px');
+            // list.parentElement.style.setProperty('--btlr', '0px');
+            // list.parentElement.style.setProperty('--bblr', '10px');
+            // list.parentElement.style.setProperty('--bbrr', '10px');
+            list.parentElement.style.borderBottom = getComputedStyle(
+              list.parentElement
+            ).borderBottom
+          }
         }
       }
     }
@@ -274,27 +352,47 @@ export class Sselect extends HTMLElement {
    * @description distribute children and replace slot content
    */
   distributeChildren() {
-    const slot: any = this.shadowRoot!.querySelector('slot')
+    const listContainer: any = this.shadowRoot!.querySelector('#list')
+    const slot: any = listContainer.children[0]
     slot.addEventListener('slotchange', () => {
       const assignedNodes = slot.assignedNodes()
       slot.remove()
-      const listContainer: any = this.shadowRoot!.querySelector('#list')
       assignedNodes.forEach((node: any) => {
         if (node.nodeType === Node.ELEMENT_NODE) {
           const wrapper = document.createElement('a')
-          wrapper.setAttribute('part', 'item')
+          wrapper.setAttribute('part', itemPartName)
           wrapper.appendChild(node)
-          listContainer.appendChild(wrapper)
+          if (node.getAttribute(placeholderValueAttributeName) !== null) {
+            listContainer.insertBefore(wrapper, listContainer.firstChild)
+          } else {
+            listContainer.appendChild(wrapper)
+          }
         }
       })
-      Array.prototype.slice
-        .call(this.shadowRoot!.getElementById('list')!.children)
-        .forEach((element) => {
-          element.addEventListener('click', this.clickItem.bind(this))
-          element.addEventListener('mouseover', this.selectElement.bind(this))
-        })
+      let listChildren = Array.prototype.slice.call(
+        this.shadowRoot!.getElementById('list')!.children
+      )
+      listChildren.forEach((element) => {
+        element.addEventListener('click', this.clickItem.bind(this))
+        element.addEventListener('mouseover', this.selectElement.bind(this))
+      })
+      // let placeholder = Array.prototype.slice.call(listContainer.children).find(e => this.searchOptionPlaceholderAttribute(e));
+      let selectionValue =
+        this.bindInitialValue(this.getAttribute('value')!) ?? ''
+      this.select!.children[0]!.innerHTML =
+        selectionValue ?? this.getAttribute('value')!
+      let placeholder = listChildren.find(
+        (l) => l.children[0].getAttribute('option-placeholder') !== null
+      )
+      this._value = placeholder
+        ? ''
+        : selectionValue !== placeholderDefaultText
+          ? selectionValue
+          : this.getAttribute('value')!
     })
   }
+
+
   /**
    * Emit a custom event
    * @param  {String} type The event type
@@ -304,111 +402,68 @@ export class Sselect extends HTMLElement {
     let event = new CustomEvent(type, {
       bubbles: true,
       cancelable: true,
+      composed: true,
       detail: detail,
     })
     return this.dispatchEvent(event)
   }
-  constructor() {
+  constructor(
+    private _value = '',
+    protected internals: ElementInternals
+  ) {
     super()
+    this.internals = this.attachInternals()
   }
+
   connectedCallback() {
+    this.setAttribute('name', this.getAttribute('name') || '') // Aggiungi attributo name
+    this.setAttribute('disabled', this.getAttribute('disabled') || '') // Aggiungi attributo name
     const shadow = this.attachShadow({ mode: 'open' })
     const style = document.createElement('style')
-    style.textContent = `
-#select #list a{
-    padding: 5px;
-    box-sizing: border-box;
-  }
-  #select #list{
-    visibility:hidden;
-    pointer-events:none;
-    position:fixed;
-    border-radius: 10px;
-    border: 1px solid black;
-    background:lightgray;
-    overflow-y: auto;
-    max-height:300px;
-    box-shadow: 1px 1px 1px black;
-    top:calc(anchor(bottom));
-    z-index:1000000;
-    position-anchor: --items;
-    left: anchor(left);
-    right:anchor(right);
-  }
-  #select{
-    background: white;
-    display: flex;
-    align-items: center;
-    border: 1px solid black;
-    padding: 10px;
-    box-sizing: border-box;
-    border-radius: 10px;
-    text-align: left;
-    anchor-name: --items;
-    position:relative;
-    width: 300px;
-    height: 40px;
-  }
-  #select svg{
-    max-width: 20px;
-    width: 20px;
-    height: 20px;;
-    margin-left: auto;
-  }
-  #select:focus-within #list{
-    visibility:visible;
-    pointer-events:all;
-    display:flex;
-    flex-direction:column;
-  }
-  #select:focus-within #list a[part=item-selected]{
-    background:blue;
-    color: white;
-  }`;
-    shadow.innerHTML = `
-        <button
-            id="focusButton"
-            style="position: fixed; top: 900%;outline: none;"
-            }>
-        </button>
-        <button id="select" part="select" >
-            <div id="selectedElement">seleziona un elemento</div>
-            <div id="list" part="itemsContainer">
-                <slot></slot>
-            </div>
-            <slot name="arrowImg">
-                <svg
-                fill="#000000"
-                height="800px"
-                width="800px"
-                version="1.1"
-                id="Layer_1"
-                xmlns="http://www.w3.org/2000/svg"
-                xmlns:xlink="http://www.w3.org/1999/xlink"
-                viewBox="0 0 407.437 407.437"
-                xml:space="preserve"
-                >
-                <polygon
-                    points="386.258,91.567 203.718,273.512 21.179,91.567 0,112.815 203.718,315.87 407.437,112.815 "
-                />
-                </svg>
-            </slot>
-        </button>`;
+    style.textContent = styles
+    shadow.innerHTML = template
     shadow.appendChild(style)
-    this.select = shadow.getElementById('select') as HTMLButtonElement
+    this.select = shadow.getElementById('select') as HTMLButtonElement;
+    this.select.setAttribute('disabled', this.getAttribute('disabled')!);
     this.select.addEventListener('keyup', this.keyup.bind(this))
     this.select.addEventListener('focus', this.loadOptionsContainer.bind(this))
     shadow
       .getElementById('focusButton')!
       .addEventListener('keyup', this.focusSelect.bind(this))
-    this.distributeChildren()
     this.loadOptionsContainer()
+    this.distributeChildren()
+  }
+  set value(val) {
+    this._value = val
+    this.setAttribute('value', val)
+    this.internals.setFormValue(val)
+  }
+
+  get value() {
+    return this._value
   }
   disconnectedCallback() {}
   static get observedAttributes() {
-    return []
+    return ['value', 'name', 'disabled']
   }
-  attributeChangedCallback(name: string, oldValue: any, newValue: any) {}
+  attributeChangedCallback(name: string, oldValue: any, newValue: any) {
+    if (this.select !== null && newValue !== oldValue && name === 'name') {
+      this.setAttribute('name', newValue)
+    }
+    if (this.select !== null && newValue !== oldValue && name === 'value') {
+      // let selectionValue = this.bindInitialValue(newValue)
+      this._value = newValue
+      this.emit(customEventName, { value: newValue })
+    }
+    if (this.select !== null && newValue !== oldValue && name === 'disabled') {
+      if (newValue !== null) {
+        this.select.setAttribute('disabled', newValue)
+      } else {
+        this.select.removeAttribute('disabled')
+      }
+    }
+  }
   adoptedCallback() {}
 }
-customElements.define('s-select', Sselect);
+
+customElements.define('my-own-select', MyOwnSelect)

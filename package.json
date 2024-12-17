@@ -1,10 +1,10 @@
 {
-  "name": "sselect",
-  "module": "src/index.ts",
+  "name": "my-own-select",
+  "module": "dist/index.js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Una select custom pronta all'uso in tutti i progetti frontend!",
   "scripts": {
     "build": "bun build --target=node ./src/index.ts --outfile=dist/index.js && bun run build:declaration",
@@ -12,16 +12,47 @@
     "postbuild": "rimraf tsconfig.types.tsbuildinfo"
   },
   "devDependencies": {
+    "@types/react": "^19.0.1",
     "bun-types": "latest",
-    "prettier": "^3.3.3",
+    "preact": "^10.25.2",
+    "prettier": "^3.4.2",
     "rimraf": "^6.0.1",
-    "typescript": "^5.6.3",
-    "@types/react": "^18.3.12"
+    "solid-js": "^1.9.3",
+    "typescript": "^5.7.2"
   },
   "peerDependencies": {
+    "@types/react": "^18.3.12",
+    "preact": "^10.24.3",
+    "solid-js": "^1.9.3",
     "typescript": "^5.0.0"
   },
   "author": "Costantino Sorrentino",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FrontendNapulitan/my-own-select.git"
+  },
+  "bugs": {
+    "url": "https://github.com/FrontendNapulitan/my-own-select/issues"
+  },
+  "keywords": [
+    "select",
+    "dropdown",
+    "custom elements",
+    "web components",
+    "React",
+    "Angular",
+    "UI component",
+    "customizable",
+    "custom select",
+    "Angular select",
+    "React select",
+    "Qwik select",
+    "Solidjs select",
+    "Preact select",
+    "Svelte select",
+    "Vuejs select",
+    "Vue select"
+  ],
   "license": "MIT",
   "files": [
     "dist/*.js",

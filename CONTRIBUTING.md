@@ -1,7 +1,7 @@
 
-# Contributing to sselect
+# Contributing to my-own-select
 
-Thank you for considering contributing to the sselect project! We welcome improvements, bug fixes, and feature additions that enhance the flexibility and usability of sselect.
+Thank you for considering contributing to the my-own-select project! We welcome improvements, bug fixes, and feature additions that enhance the flexibility and usability of my-own-select.
 
 ## How to Contribute
 
@@ -12,8 +12,8 @@ Start by forking the repository to your own GitHub account. This allows you to f
 Clone your forked repository to your local machine.
 
 ```bash
-git clone https://github.com/your-username/sselect.git
-cd sselect
+git clone https://github.com/your-username/my-own-select.git
+cd my-own-select
 ```
 
 ### 3. Create a Branch for Your Contribution
@@ -54,4 +54,4 @@ By participating in this project. Be respectful, constructive, and open-minded i
 - Feel free to open an issue if you have questions, found a bug, or have a suggestion before starting your work.
 - Make sure your pull request is up-to-date with the `main` branch.
 
-Thank you for your contributions! They help make sselect a better tool for everyone.
+Thank you for your contributions! They help make my-own-select a better tool for everyone.
