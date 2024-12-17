@@ -150,8 +150,7 @@ function App() {
 
 ### Angular 
 ![image](https://avatars.githubusercontent.com/u/139426?s=200&v=4)
-### Angular 
-![image](https://avatars.githubusercontent.com/u/139426?s=200&v=4)
+
 
 For Angular projects, you may need to allow custom elements within your module by configuring `CUSTOM_ELEMENTS_SCHEMA`:
 
