@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Una select custom pronta all'uso in tutti i progetti frontend!",
   "scripts": {
     "build": "bun build --target=node ./src/index.ts --outfile=dist/index.js && bun run build:declaration",
@@ -27,32 +27,6 @@
     "typescript": "^5.0.0"
   },
   "author": "Costantino Sorrentino",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/FrontendNapulitan/my-own-select.git"
-  },
-  "bugs": {
-    "url": "https://github.com/FrontendNapulitan/my-own-select/issues"
-  },
-  "keywords": [
-    "select",
-    "dropdown",
-    "custom elements",
-    "web components",
-    "React",
-    "Angular",
-    "UI component",
-    "customizable",
-    "custom select",
-    "Angular select",
-    "React select",
-    "Qwik select",
-    "Solidjs select",
-    "Preact select",
-    "Svelte select",
-    "Vuejs select",
-    "Vue select"
-  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/FrontendNapulitan/my-own-select.git"
