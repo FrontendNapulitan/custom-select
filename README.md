@@ -7,10 +7,8 @@
 ## Installation
 
 You can install `my-own-select` via npm:
-You can install `my-own-select` via npm:
 
 ```bash
-npm install my-own-select
 npm install my-own-select
 ```
 
@@ -116,10 +114,8 @@ my-own-select is fully compatible with form context:
 ![image](https://cdn.iconscout.com/icon/free/png-256/free-react-logo-icon-download-in-svg-png-gif-file-formats--company-brand-world-logos-vol-4-pack-icons-282599.png?f=webp&w=200)
 
 For ReactJS, ensure you import and use the `my-own-select` component as a custom element within your JSX code. You may need to register the component to ensure it works as expected:
-For ReactJS, ensure you import and use the `my-own-select` component as a custom element within your JSX code. You may need to register the component to ensure it works as expected:
 
 ```javascript
-import 'my-own-select';
 import 'my-own-select';
 
 function App() {
@@ -137,11 +133,9 @@ function App() {
 
   return (
     <my-own-select ref={selectRef}>
-    <my-own-select ref={selectRef}>
       <p>First option</p>
       <h1>Second option</h1>
       <MyComponent />
-    </my-own-select>
     </my-own-select>
   );
 }
@@ -156,7 +150,6 @@ For Angular projects, you may need to allow custom elements within your module b
 ```typescript
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import 'my-own-select';
-import 'my-own-select';
 
 @NgModule({
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -165,15 +158,12 @@ export class AppModule {}
 ```
 
 Then, you can use `my-own-select` in your Angular templates and listen for the `selection` event:
-Then, you can use `my-own-select` in your Angular templates and listen for the `selection` event:
 
 ```html
-<my-own-select (selection)="onSelection($event)">
 <my-own-select (selection)="onSelection($event)">
    <p>First option</p>
    <h1>Second option</h1>
    <my-component></my-component>
-</my-own-select>
 </my-own-select>
 ```
 
@@ -433,7 +423,6 @@ for handle selection event:
 - **Options container**: Style the container holding all options.
   ```css
   my-own-select::part(itemsContainer) {
-  my-own-select::part(itemsContainer) {
     /* Add your styles here */
     background-color: white;
     border: 1px solid #ccc;
@@ -445,12 +434,10 @@ for handle selection event:
 - **Single option item**: Customize individual options.
   ```css
   my-own-select::part(item) {
-  my-own-select::part(item) {
     /* Add your styles here */
     padding: 8px;
     cursor: pointer;
   }
-  my-own-select::part(item-selected) {
   my-own-select::part(item-selected) {
     /* Selected item */
     background-color: #f0f0f0;
