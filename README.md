@@ -2,7 +2,6 @@
 # my-own-select
 
 `my-own-select` is a highly customizable dropdown select component built using the `customElements` API. It is compatible with both ReactJS and Angular, and it allows for in-depth customization of the dropdown appearance and behavior. `my-own-select` offers a flexible structure, allowing you to insert HTML tags, components, and styled elements as options within the select dropdown.
-`my-own-select` is a highly customizable dropdown select component built using the `customElements` API. It is compatible with both ReactJS and Angular, and it allows for in-depth customization of the dropdown appearance and behavior. `my-own-select` offers a flexible structure, allowing you to insert HTML tags, components, and styled elements as options within the select dropdown.
 
 ## Installation
 

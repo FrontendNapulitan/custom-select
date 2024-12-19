@@ -62,3 +62,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     ```
     the option to which the `option-placeholder` attribute is applied will always be placed in first position compared to the other options and it's value is always an empty string, even if on same option is applied also `option-value` attribute
 
+## [1.1.3] - 2024-12-19
+
+- fix handle initial disabled status

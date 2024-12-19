@@ -419,15 +419,19 @@ export class MyOwnSelect extends HTMLElement {
   }
 
   connectedCallback() {
-    this.setAttribute('name', this.getAttribute('name') || '') // Aggiungi attributo name
-    this.setAttribute('disabled', this.getAttribute('disabled') || '') // Aggiungi attributo name
+    this.setAttribute('name', this.getAttribute('name') || ''); // Aggiungi attributo name
+    if(this.getAttribute('disabled') !== null){
+      this.setAttribute('disabled', 'disabled') // Aggiungi attributo disabled
+    }
     const shadow = this.attachShadow({ mode: 'open' })
     const style = document.createElement('style')
     style.textContent = styles
     shadow.innerHTML = template
     shadow.appendChild(style)
     this.select = shadow.getElementById('select') as HTMLButtonElement;
-    this.select.setAttribute('disabled', this.getAttribute('disabled')!);
+    if(this.getAttribute('disabled') !== null){
+      this.select.setAttribute('disabled', this.getAttribute('disabled')!);
+    }
     this.select.addEventListener('keyup', this.keyup.bind(this))
     this.select.addEventListener('focus', this.loadOptionsContainer.bind(this))
     shadow

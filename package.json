@@ -1,5 +1,5 @@
 {
-  "name": "my-own-select",
+  "name": "my-own-select-dev",
   "module": "dist/index.js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
