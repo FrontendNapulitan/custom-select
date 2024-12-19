@@ -504,11 +504,9 @@ everywhere in your select, event at begin or in the middle of your options:
 ## Compatibility
 
 `my-own-select` is built with the `customElements` API, making it natively compatible across modern browsers. It integrates seamlessly with popular frontend frameworks like ReactJS and Angular.
-`my-own-select` is built with the `customElements` API, making it natively compatible across modern browsers. It integrates seamlessly with popular frontend frameworks like ReactJS and Angular.
 
 ## Contributing
 
-If you'd like to contribute to `my-own-select`, please submit an issue or a pull request on our GitHub repository. Contributions, bug reports, and feature suggestions are welcome!
 If you'd like to contribute to `my-own-select`, please submit an issue or a pull request on our GitHub repository. Contributions, bug reports, and feature suggestions are welcome!
 
 ## License
@@ -517,7 +515,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
-Happy coding with `my-own-select`!
 Happy coding with `my-own-select`!
 
 ## Authors
@@ -531,7 +528,6 @@ Add badges from somewhere like: [shields.io](https://shields.io/)
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
-[![AGPL License](https://img.shields.io/badge/license-AGPL-blue.svg)](http://www.gnu.org/licenses/agpl-3.0)
 
 
 ## Contributing
